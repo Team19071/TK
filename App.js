@@ -5,7 +5,9 @@
  * @format
  * @flow
  */
-
+//cobot telegram api:1091793888:AAFM7oOi6lYFLjc1oSag8n_kjqHbutblqQM
+//TK telegram chat id:1048696277 
+//Liu chat id : 828236888
 import React, { Component } from 'react';
 import { Text, View,Button,Alert} from 'react-native';
 console.ignoredYellowBox = ['Remote debugger'];
@@ -50,6 +52,30 @@ YellowBox.ignoreWarnings([
 //var databasemessage;
 var ws = new WebSocket("ws://localhost:5555/chat");
 var states = " ";
+
+
+
+
+
+function Sendmessagetotelegram(chatid, message){
+  fetch('https://api.telegram.org/bot1091793888:AAFM7oOi6lYFLjc1oSag8n_kjqHbutblqQM/sendMessage?chat_id='+chatid+'&text='+message)
+  .then((data) => {
+    //console.log(data);
+    //console.log(data.json())
+    return data.json();
+  })
+  .then((response) => {
+      //console.log("success: ", response);
+      //console.log(response[0]["UserID"]);
+      //alert(response[0]["UserID"])
+      //databasemessage =  response;
+      //return response;
+  })
+  .catch((error) => {
+      console.warn("error: "+error);
+  })
+  //return response;
+}
   /*
   function name: Storeuser
   Developed by TK Chen.
@@ -91,7 +117,7 @@ headers: {
 },
 body: JSON.stringify({
 
-  icobotid: IP,
+  icobotid: ID,
 
   ip: IP,
 
@@ -190,7 +216,18 @@ function GetCobot(){
 /*
 TK end
 */
-
+function checkError(){
+  //cobotData = GetCobot();
+  //for(i=0; i<cobotData.length; i++){
+  //cobotIP = cobotData[0]["IP"];
+  //var client = TcpSocket.createConnection(cobotIP, 29999);
+  ws.send(str2ab("robotmode\n"));
+  //if(currentMode != 0){
+    //Storeerror(ID, cobotIP, currentMode);
+    //alert("Error: " + cobotIP + " " + ab2str(currentMode));
+  //}
+  //}
+}
 
 
 
@@ -201,6 +238,17 @@ ws.onopen = function(evt) {
         //ws.send(str2ab("HelloWebSockets!"));
     };
     ws.onmessage = function(evt) {
+      if(ab2str(evt.data) == "Robotmode: RUNNING\n"){
+        
+        Alert.alert(
+          'Return Message',
+           "1",
+          [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+         ],
+         { cancelable: false }
+           ) 
+      }
         //var data = String.fromCharCode.apply(null, new Uint16Array(evt.data));
         console.log("Received Message: " + ab2str(evt.data));
         Alert.alert(
@@ -211,6 +259,7 @@ ws.onopen = function(evt) {
  ],
  { cancelable: false }
    ) 
+
         //ws.close();
     };
     function ab2str(buf) {
@@ -255,7 +304,7 @@ export default class HelloWorldApp extends Component {
     ws.send(str2ab("get loaded program\n"));
   }
   Send(){
-    ws.send(str2ab("play\n"));
+    ws.send(str2ab("robotmode\n"));
 
     // ws.onopen = function()
     //  {
@@ -266,8 +315,7 @@ export default class HelloWorldApp extends Component {
   }
 
   Stop(){
-    databasemessage= Getuser();
-    console.log(databasemessage);
+    Sendmessagetotelegram(828236888,"Hi Ali");
     //Storecobot(3,5,7);
     //ws.send(str2ab("shutdown\n"));
     // console.log(ws.readyState);
@@ -285,7 +333,7 @@ export default class HelloWorldApp extends Component {
         <Text></Text> 
         <Button title="Connect" onPress={this.Connect}></Button>
         <Button title="Start" onPress={this.Send}></Button>
-        <Button title="Stop" onPress={this.Stop}></Button>
+        <Button title="Stop" onPress={this.checkError}></Button>
 
       </View>
    
